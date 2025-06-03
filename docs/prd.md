@@ -1,81 +1,97 @@
-Project Title
-Automated Motivational Video Generation and Publishing System Using Dockerized n8n
+# Automated Motivational Video Generation and Publishing System Using Dockerized n8n
 
-1. Purpose
+## 1. Purpose
+
 To design and implement an automated system that generates custom motivational video content, creates AI voice-overs, assembles videos, and uploads them to YouTube using n8n. The system will be deployed via Docker for scalability and maintainability, with robust version control for workflows and configuration. The system will use advanced prompt engineering to generate structured content for each video, ready for automated production and publishing.
 
-2. Scope
-Automated workflow orchestration using Dockerized n8n
+## 2. Scope
 
-AI-powered script and metadata generation (via OpenAI)
+- Automated workflow orchestration using Dockerized n8n
+- AI-powered script and metadata generation (via OpenAI)
+- AI voice-over creation
+- Automated video assembly
+- YouTube upload automation
+- Version control for workflows and configuration using Git
+- Persistent storage for all workflow data and assets
+- Structured content output matching business rules for easy tracking and automation
 
-AI voice-over creation
+## 3. Functional Requirements
 
-Automated video assembly
+### 3.1 Workflow Automation
 
-YouTube upload automation
+#### Trigger Options
+- Manual
+- Scheduled
+- Webhook-based triggers for workflow initiation
 
-Version control for workflows and configuration using Git
+#### Script Generation
+- Use OpenAI to generate motivational scripts, captions, and metadata via a structured prompt
 
-Persistent storage for all workflow data and assets
+#### Voice-Over Generation
+- Use AI text-to-speech (TTS) APIs (e.g., ElevenLabs, LOVO) to convert scripts into audio files
 
-Structured content output matching business rules for easy tracking and automation
+#### Visual Asset Generation
+- Fetch or generate background images/videos using APIs like Pexels, Unsplash, or AI image generators
 
-3. Functional Requirements
-3.1 Workflow Automation
-Trigger Options: Manual, scheduled, or webhook-based triggers for workflow initiation.
+#### Video Assembly
+- **Option A**: Use Creatomate API for templated video creation
+- **Option B**: Use FFmpeg (via n8n Execute Command node) for custom assembly
 
-Script Generation: Use OpenAI to generate motivational scripts, captions, and metadata via a structured prompt.
+#### Metadata Generation
+- Use AI to generate YouTube-optimized titles, descriptions, and tags
 
-Voice-Over Generation: Use AI text-to-speech (TTS) APIs (e.g., ElevenLabs, LOVO) to convert scripts into audio files.
+#### YouTube Upload
+- Upload videos with metadata using the YouTube Data API or n8n's YouTube node
 
-Visual Asset Generation: Fetch or generate background images/videos using APIs like Pexels, Unsplash, or AI image generators.
+#### Notification & Logging
+- Notify stakeholders of upload status
+- Log video links and metadata
 
-Video Assembly:
+### 3.2 Dockerized Deployment
+- Deploy n8n using Docker and Docker Compose
+- Use environment variables for configuration
+- Persist data using Docker volumes
 
-Option A: Use Creatomate API for templated video creation.
+### 3.3 Version Control
+- Export n8n workflows as JSON files and commit to a Git repository
+- Store configuration files (.env, docker-compose.yml, scripts) in the same repository
+- Automate workflow exports and Git commits via scheduled n8n workflows or CI tools
+- Exclude sensitive data from version control using .gitignore
 
-Option B: Use FFmpeg (via n8n Execute Command node) for custom assembly.
-
-Metadata Generation: Use AI to generate YouTube-optimized titles, descriptions, and tags.
-
-YouTube Upload: Upload videos with metadata using the YouTube Data API or n8n’s YouTube node.
-
-Notification & Logging: Notify stakeholders of upload status and log video links and metadata.
-
-3.2 Dockerized Deployment
-Deploy n8n using Docker and Docker Compose.
-
-Use environment variables for configuration.
-
-Persist data using Docker volumes.
-
-3.3 Version Control
-Export n8n workflows as JSON files and commit to a Git repository.
-
-Store configuration files (.env, docker-compose.yml, scripts) in the same repository.
-
-Automate workflow exports and Git commits via scheduled n8n workflows or CI tools.
-
-Exclude sensitive data from version control using .gitignore.
-
-3.4 Structured Content Output
-All generated content must follow a strict table structure for each video idea, including columns for id, idea, caption, channel_style_prompt, character_style_prompt, production_status, final_output, publishing_status, and error_log.
+### 3.4 Structured Content Output
+All generated content must follow a strict table structure for each video idea, including columns for:
+- id
+- idea
+- caption
+- channel_style_prompt
+- character_style_prompt
+- production_status
+- final_output
+- publishing_status
+- error_log
 
 Each field must follow specific business rules for consistency and automation-readiness.
 
-4. Non-Functional Requirements
-Reliability: System must recover from failures using persistent storage and versioned backups.
+## 4. Non-Functional Requirements
 
-Security: Credentials and secrets must not be committed to Git; use environment variables or secrets managers.
+### Reliability
+- System must recover from failures using persistent storage and versioned backups
 
-Scalability: Dockerized architecture to support scaling and easy deployment.
+### Security
+- Credentials and secrets must not be committed to Git
+- Use environment variables or secrets managers
 
-Maintainability: Modular workflow design and version-controlled configuration for easy updates and rollbacks.
+### Scalability
+- Dockerized architecture to support scaling and easy deployment
 
-5. Technical Architecture
-5.1 System Diagram
-text
+### Maintainability
+- Modular workflow design
+- Version-controlled configuration for easy updates and rollbacks
+
+## 5. Technical Architecture
+
+### 5.1 System Diagram
+```
 [User/Trigger/Sheet]
         |
         v
@@ -91,52 +107,48 @@ text
    [Persistent Storage (Docker Volume)]
         |
    [Version Control (Git Repo for JSON exports & config)]
-5.2 Docker Deployment
-Use official n8n Docker image.
+```
 
-Store data in ~/.n8n (or mapped volume).
+### 5.2 Docker Deployment
+- Use official n8n Docker image
+- Store data in ~/.n8n (or mapped volume)
+- Use .env and docker-compose.yml for configuration
 
-Use .env and docker-compose.yml for configuration.
+### 5.3 Version Control
+- All workflow exports and config files tracked in Git
+- Automated export and commit process for workflow changes
 
-5.3 Version Control
-All workflow exports and config files tracked in Git.
+## 6. Implementation Steps
 
-Automated export and commit process for workflow changes.
+### 6.1 Dockerized n8n Setup
+1. Install Docker and Docker Compose
+2. Create .env file for environment variables
+3. Set up Docker volumes for persistent data
+4. Launch n8n using Docker Compose
 
-6. Implementation Steps
-6.1 Dockerized n8n Setup
-Install Docker and Docker Compose.
+### 6.2 Workflow Development in n8n
+1. Build modular workflows for each step:
+   - Script generation
+   - TTS
+   - Asset fetch
+   - Assembly
+   - Upload
+2. Use the OpenAI node or HTTP Request node for AI integration
+3. Use structured prompt (see below) for generating content and metadata
+4. Use Execute Command node for FFmpeg if self-hosted
+5. Test each module individually
 
-Create .env file for environment variables.
+### 6.3 Version Control Strategy
+1. Regularly export workflows as JSON
+2. Commit exports and config files to Git
+3. Automate exports and commits via n8n or CI/CD
+4. Use .gitignore to exclude sensitive files
 
-Set up Docker volumes for persistent data.
+## 7. AI Prompt for Structured Content Generation
 
-Launch n8n using Docker Compose.
-
-6.2 Workflow Development in n8n
-Build modular workflows for each step (script gen, TTS, asset fetch, assembly, upload).
-
-Use the OpenAI node or HTTP Request node for AI integration.
-
-Use structured prompt (see below) for generating content and metadata.
-
-Use Execute Command node for FFmpeg if self-hosted.
-
-Test each module individually.
-
-6.3 Version Control Strategy
-Regularly export workflows as JSON.
-
-Commit exports and config files to Git.
-
-Automate exports and commits via n8n or CI/CD.
-
-Use .gitignore to exclude sensitive files.
-
-7. AI Prompt for Structured Content Generation
 This prompt is to be used with the OpenAI node or HTTP Request node in n8n for generating batch content in the required table format:
 
-json
+```json
 {
   "model": "gpt-4",
   "messages": [
@@ -151,37 +163,41 @@ json
   ],
   "temperature": 0.85
 }
-Replace {{topic}} and {{count}} dynamically in n8n for each batch.
+```
+
+Replace `{{topic}}` and `{{count}}` dynamically in n8n for each batch.
 
 The output is a JSON array ready for downstream processing, tracking, and reporting.
 
-8. Risks & Mitigations
-API Rate Limits: Use API keys with appropriate quotas and handle errors gracefully.
+## 8. Risks & Mitigations
 
-Credential Leakage: Never commit secrets to Git; use environment variables.
+### API Rate Limits
+- Use API keys with appropriate quotas
+- Handle errors gracefully
 
-Data Loss: Use persistent Docker volumes and regular Git commits for backup.
+### Credential Leakage
+- Never commit secrets to Git
+- Use environment variables
 
-Workflow Corruption: Version control enables rollback to previous working states.
+### Data Loss
+- Use persistent Docker volumes
+- Regular Git commits for backup
 
-9. Success Criteria
-End-to-end automated generation and upload of custom motivational videos to YouTube.
+### Workflow Corruption
+- Version control enables rollback to previous working states
 
-All workflows and configurations are version-controlled and easily restorable.
+## 9. Success Criteria
 
-All generated content follows the specified table structure and business rules.
+- End-to-end automated generation and upload of custom motivational videos to YouTube
+- All workflows and configurations are version-controlled and easily restorable
+- All generated content follows the specified table structure and business rules
+- Minimal manual intervention required for content creation and deployment
+- Secure handling of credentials and persistent storage of all data
 
-Minimal manual intervention required for content creation and deployment.
+## 10. References
 
-Secure handling of credentials and persistent storage of all data.
-
-10. References
-[n8n OpenAI Integration Documentation]
-
-[n8n AI Workflow Tutorial]
-
-[Creatomate n8n Integration]
-
-[YouTube Data API]
-
-[OpenAI API]
+- [n8n OpenAI Integration Documentation]
+- [n8n AI Workflow Tutorial]
+- [Creatomate n8n Integration]
+- [YouTube Data API]
+- [OpenAI API]
